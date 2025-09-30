@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: ImageVault
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/imagevault
+    username: 
+    password: 
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        default_schema: dev
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    schemas: dev
+
+springdoc:
+  swagger-ui:
+    path: /api-docs
