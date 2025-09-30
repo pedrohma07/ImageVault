@@ -2,6 +2,8 @@ package io.pedrohma07.ImageVault.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.time.OffsetDateTime;
@@ -15,6 +17,8 @@ import java.util.UUID;
 @Getter
 @Setter
 @Builder
+@SQLDelete(sql = "UPDATE dev.users SET deleted_at = NOW() WHERE id=?")
+@SQLRestriction("deleted_at IS NULL")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
