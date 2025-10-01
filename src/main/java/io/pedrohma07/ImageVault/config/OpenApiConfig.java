@@ -18,8 +18,7 @@ import org.springframework.context.annotation.Configuration;
                         name = "Apache 2.0",
                         url = "https://www.apache.org/licenses/LICENSE-2.0"
                 )
-        ),
-        security = @SecurityRequirement(name = "bearerAuth") // Aplica segurança globalmente
+        )
 )
 @SecurityScheme(
         name = "bearerAuth",

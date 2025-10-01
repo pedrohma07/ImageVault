@@ -10,6 +10,7 @@ import io.pedrohma07.ImageVault.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +23,7 @@ import java.util.UUID;
 public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
 
     public ResponseUserDTO createUser(CreateUserDTO createUserDTO) {
         userRepository.findByEmail(createUserDTO.email()).ifPresent(user -> {
@@ -31,7 +33,7 @@ public class UserService {
         var newUser = User.builder()
                 .name(createUserDTO.name())
                 .email(createUserDTO.email())
-                .password(createUserDTO.password())
+                .password(passwordEncoder.encode(createUserDTO.password()))
                 .build();
 
         User savedUser = userRepository.save(newUser);

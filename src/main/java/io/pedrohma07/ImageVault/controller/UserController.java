@@ -8,6 +8,8 @@ import io.pedrohma07.ImageVault.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,12 +23,14 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/api/user")
 @Tag(name = "user", description = "Endpoints para registro e listagem de usuários.")
+@SecurityRequirement(name = "bearerAuth")
 public class UserController {
     private final UserService userService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Registra um novo usuário", description = "Cria uma nova conta de usuário no sistema.") // 2. Descreve o endpoint
+    @SecurityRequirements(value = {})
     @ApiResponses(value = { // 3. Documenta as possíveis respostas
             @ApiResponse(responseCode = "201", description = "Usuário registrado com sucesso."),
             @ApiResponse(responseCode = "400", description = "Dados de entrada inválidos (ex: e-mail ou senha fora do padrão)."),
