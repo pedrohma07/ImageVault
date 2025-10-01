@@ -3,6 +3,7 @@ package io.pedrohma07.ImageVault.service;
 import io.pedrohma07.ImageVault.dto.user.CreateUserDTO;
 import io.pedrohma07.ImageVault.dto.user.ResponseUserDTO;
 import io.pedrohma07.ImageVault.dto.user.UpdateUserDTO;
+import io.pedrohma07.ImageVault.exception.ResourceNotFoundException;
 import io.pedrohma07.ImageVault.mapper.UserMapper;
 import io.pedrohma07.ImageVault.model.User;
 import io.pedrohma07.ImageVault.repository.UserRepository;
@@ -44,13 +45,13 @@ public class UserService {
 
     public ResponseUserDTO getUserById(String id) {
         User user = userRepository.findById(UUID.fromString(id))
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
         return userMapper.toResponseUserDTO(user);
     }
 
     public ResponseUserDTO updateUser(String id, UpdateUserDTO updateUserDTO) {
         User user = userRepository.findById(java.util.UUID.fromString(id))
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado com o ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado com o ID: " + id));
 
         user.setName(updateUserDTO.name());
 
@@ -61,7 +62,7 @@ public class UserService {
     public void deleteUser(String id) {
         UUID uuid = UUID.fromString(id);
         if (!userRepository.existsById(uuid)) {
-            throw new RuntimeException("Usuário não encontrado com o ID: " + id);
+            throw new ResourceNotFoundException("Usuário não encontrado com o ID: " + id);
         }
         userRepository.deleteById(uuid);
     }

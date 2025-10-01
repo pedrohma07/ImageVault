@@ -11,6 +11,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 import java.time.LocalDateTime;
@@ -28,9 +29,35 @@ public class GlobalResponseHandler implements ResponseBodyAdvice<Object> {
     @Override
     public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType,
                                   Class selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
-        int statusCode = ((org.springframework.http.server.ServletServerHttpResponse) response).getServletResponse().getStatus();
         String path = request.getURI().getPath();
+
+        // Não embrulha respostas do Swagger/OpenAPI
+        if (path.startsWith("/v3/api-docs") || path.startsWith("/swagger-ui")) {
+            return body;
+        }
+
+        // Evita double wrap se já for ApiResponse
+        if (body instanceof ApiResponse) {
+            return body;
+        }
+
+        int statusCode = ((org.springframework.http.server.ServletServerHttpResponse) response).getServletResponse().getStatus();
+
         return new ApiResponse<>(statusCode, "Operação realizada com sucesso.", body, path, true, LocalDateTime.now());
+    }
+
+    // Handler para "Unauthorized" (401)
+    @ExceptionHandler(UnauthorizedException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ApiResponse<Object> handleUnauthorizedException(UnauthorizedException ex, HttpServletRequest request) {
+        return new ApiResponse<>(
+                HttpStatus.UNAUTHORIZED.value(),
+                ex.getMessage() != null ? ex.getMessage() : "Acesso não autorizado.",
+                null,
+                request.getRequestURI(),
+                false,
+                LocalDateTime.now()
+        );
     }
 
     // Handler para "Resource Not Found" (404)

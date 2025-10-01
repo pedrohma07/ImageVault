@@ -38,7 +38,7 @@ public class UserController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Lista todos os usuários", description = "Retorna uma lista de todos os usuários registrados no sistema.") // 2. Descreve o endpoint
+    @Operation(summary = "Lista todos os usuários", description = "Retorna uma lista de todos os usuários registrados no sistema.")
     @ApiResponses(value = { // 3. Documenta as possíveis respostas
             @ApiResponse(responseCode = "200", description = "Lista de usuários retornada com sucesso."),
             @ApiResponse(responseCode = "401", description = "Não autorizado. Token JWT inválido ou ausente."),
