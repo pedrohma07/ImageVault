@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -53,6 +54,19 @@ public class GlobalResponseHandler implements ResponseBodyAdvice<Object> {
         return new ApiResponse<>(
                 HttpStatus.UNAUTHORIZED.value(),
                 ex.getMessage() != null ? ex.getMessage() : "Acesso não autorizado.",
+                null,
+                request.getRequestURI(),
+                false,
+                LocalDateTime.now()
+        );
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ApiResponse<Object> handleBadCredentialsException(BadCredentialsException ex, HttpServletRequest request) {
+        return new ApiResponse<>(
+                HttpStatus.UNAUTHORIZED.value(),
+                "E-mail ou senha inválidos. Por favor, tente novamente.",
                 null,
                 request.getRequestURI(),
                 false,
@@ -110,7 +124,9 @@ public class GlobalResponseHandler implements ResponseBodyAdvice<Object> {
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ApiResponse<Object> handleGenericException(Exception ex, HttpServletRequest request) {
-        // É uma boa prática não expor a mensagem de exceções internas
+
+        System.out.println(ex);
+
         return new ApiResponse<>(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 "Ocorreu um erro inesperado no servidor.",
