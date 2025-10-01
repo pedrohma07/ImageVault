@@ -2,6 +2,8 @@ package io.pedrohma07.ImageVault.controller;
 
 import io.pedrohma07.ImageVault.dto.auth.AuthResponseDTO;
 import io.pedrohma07.ImageVault.dto.auth.LoginRequestDTO;
+import io.pedrohma07.ImageVault.dto.auth.RefreshTokenRequestDTO;
+import io.pedrohma07.ImageVault.dto.auth.RefreshTokenResponsetDTO;
 import io.pedrohma07.ImageVault.dto.user.CreateUserDTO;
 import io.pedrohma07.ImageVault.dto.user.ResponseUserDTO;
 import io.pedrohma07.ImageVault.service.AuthService;
@@ -33,5 +35,11 @@ public class AuthController {
     @Operation(summary = "Autentica um usuário e retorna os tokens")
     public ResponseEntity<AuthResponseDTO> login(@Valid @RequestBody LoginRequestDTO loginRequest) {
         return ResponseEntity.ok(authService.login(loginRequest));
+    }
+
+    @PostMapping("/refresh-token")
+    @Operation(summary = "Gera um novo access token a partir de um refresh token")
+    public ResponseEntity<RefreshTokenResponsetDTO> refreshToken(@Valid @RequestBody RefreshTokenRequestDTO request) {
+        return ResponseEntity.ok(authService.refreshToken(request.refreshToken()));
     }
 }

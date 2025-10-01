@@ -74,6 +74,19 @@ public class GlobalResponseHandler implements ResponseBodyAdvice<Object> {
         );
     }
 
+    @ExceptionHandler(TokenRefreshException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ApiResponse<Object> handleTokenRefreshException(TokenRefreshException ex, HttpServletRequest request) {
+        return new ApiResponse<>(
+                HttpStatus.FORBIDDEN.value(),
+                ex.getMessage(),
+                null,
+                request.getRequestURI(),
+                false,
+                LocalDateTime.now()
+        );
+    }
+
     // Handler para "Resource Not Found" (404)
     @ExceptionHandler(ResourceNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)

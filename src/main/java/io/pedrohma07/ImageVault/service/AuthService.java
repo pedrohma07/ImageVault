@@ -2,6 +2,8 @@ package io.pedrohma07.ImageVault.service;
 
 import io.pedrohma07.ImageVault.dto.auth.AuthResponseDTO;
 import io.pedrohma07.ImageVault.dto.auth.LoginRequestDTO;
+import io.pedrohma07.ImageVault.dto.auth.RefreshTokenResponsetDTO;
+import io.pedrohma07.ImageVault.exception.TokenRefreshException;
 import io.pedrohma07.ImageVault.model.RefreshToken;
 import io.pedrohma07.ImageVault.model.User;
 import io.pedrohma07.ImageVault.repository.RefreshTokenRepository;
@@ -55,5 +57,23 @@ public class AuthService {
                 .build();
 
         return refreshTokenRepository.save(refreshToken);
+    }
+
+    public RefreshTokenResponsetDTO refreshToken(String refreshToken) {
+
+        return refreshTokenRepository.findByToken(refreshToken)
+                .map(token -> {
+                    if (token.getExpiryDate().isBefore(OffsetDateTime.now())) {
+                        refreshTokenRepository.delete(token);
+                        throw new TokenRefreshException(token.getToken(), "Refresh token expirado. Por favor, faça login novamente.");
+                    }
+
+                    User user = token.getUser();
+
+                    String newAccessToken = jwtService.generateToken(user);
+
+                    return new RefreshTokenResponsetDTO(newAccessToken);
+                })
+                .orElseThrow(() -> new TokenRefreshException(refreshToken, "Refresh token não encontrado."));
     }
 }
