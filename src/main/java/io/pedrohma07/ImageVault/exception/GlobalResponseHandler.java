@@ -13,8 +13,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
+import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -87,6 +89,20 @@ public class GlobalResponseHandler implements ResponseBodyAdvice<Object> {
         );
     }
 
+    // Handler para "Forbidden"(403)
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ApiResponse<Object> handleAccessDeniedException(AccessDeniedException ex, HttpServletRequest request) {
+        return new ApiResponse<>(
+                HttpStatus.FORBIDDEN.value(),
+                "Acesso negado. Você não tem permissão para executar esta ação.",
+                null,
+                request.getRequestURI(),
+                false,
+                LocalDateTime.now()
+        );
+    }
+
     // Handler para "Resource Not Found" (404)
     @ExceptionHandler(ResourceNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
@@ -126,6 +142,20 @@ public class GlobalResponseHandler implements ResponseBodyAdvice<Object> {
         return new ApiResponse<>(
                 HttpStatus.CONFLICT.value(),
                 ex.getMessage(),
+                null,
+                request.getRequestURI(),
+                false,
+                LocalDateTime.now()
+        );
+    }
+
+    // Handler para "Bad Request" - Erros de cliente HTTP (400)
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    @ResponseStatus(HttpStatus.PAYLOAD_TOO_LARGE) // Retorna o status 413
+    public ApiResponse<Object> handleMaxSizeException(MaxUploadSizeExceededException ex, HttpServletRequest request) {
+        return new ApiResponse<>(
+                HttpStatus.PAYLOAD_TOO_LARGE.value(),
+                "Arquivo muito grande! O tamanho máximo permitido é de 10MB.",
                 null,
                 request.getRequestURI(),
                 false,

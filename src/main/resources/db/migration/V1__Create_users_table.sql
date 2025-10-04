@@ -1,9 +1,6 @@
--- Habilita a extensão pgcrypto se ainda não estiver habilitada,
--- para podermos usar gen_random_uuid()
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
--- Cria a tabela de usuários
-CREATE TABLE users (
+CREATE TABLE dev.users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
@@ -16,10 +13,8 @@ CREATE TABLE users (
     deleted_at TIMESTAMP WITH TIME ZONE
 );
 
--- Adiciona um índice na coluna de email para otimizar buscas
-CREATE INDEX idx_users_email ON users(email);
+CREATE INDEX idx_users_email ON dev.users(email);
 
--- Opcional: Trigger para atualizar 'updated_at' automaticamente em cada update.
 CREATE OR REPLACE FUNCTION trigger_set_timestamp()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -29,6 +24,6 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER set_timestamp
-BEFORE UPDATE ON users
+BEFORE UPDATE ON dev.users
 FOR EACH ROW
 EXECUTE FUNCTION trigger_set_timestamp();

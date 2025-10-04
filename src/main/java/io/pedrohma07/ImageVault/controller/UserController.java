@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/user")
-@Tag(name = "user", description = "Endpoints para registro e listagem de usuários.")
+@Tag(name = "User", description = "Endpoints para registro e listagem de usuários.")
 @SecurityRequirement(name = "bearerAuth")
 public class UserController {
     private final UserService userService;
