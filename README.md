@@ -44,7 +44,7 @@
 
 1.  **Clone o repositório:**
     ```bash
-    git clone [https://github.com/seu-usuario/ImageVault.git](https://github.com/seu-usuario/ImageVault.git)
+    git clone https://github.com/pedrohma07/ImageVault.git
     cd ImageVault
     ```
 
