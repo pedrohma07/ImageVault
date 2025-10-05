@@ -1,9 +1,6 @@
 package io.pedrohma07.ImageVault.controller;
 
-import io.pedrohma07.ImageVault.dto.auth.AuthResponseDTO;
-import io.pedrohma07.ImageVault.dto.auth.LoginRequestDTO;
-import io.pedrohma07.ImageVault.dto.auth.RefreshTokenRequestDTO;
-import io.pedrohma07.ImageVault.dto.auth.RefreshTokenResponsetDTO;
+import io.pedrohma07.ImageVault.dto.auth.*;
 import io.pedrohma07.ImageVault.dto.user.CreateUserDTO;
 import io.pedrohma07.ImageVault.dto.user.ResponseUserDTO;
 import io.pedrohma07.ImageVault.service.AuthService;
@@ -41,5 +38,11 @@ public class AuthController {
     @Operation(summary = "Gera um novo access token a partir de um refresh token")
     public ResponseEntity<RefreshTokenResponsetDTO> refreshToken(@Valid @RequestBody RefreshTokenRequestDTO request) {
         return ResponseEntity.ok(authService.refreshToken(request.refreshToken()));
+    }
+
+    @PostMapping("/login-2fa")
+    @Operation(summary = "Verifica o código 2FA e finaliza o login")
+    public ResponseEntity<AuthResponseDTO> loginWith2fa(@Valid @RequestBody Login2faRequestDTO login2faRequest) {
+        return ResponseEntity.ok(authService.verify2faLogin(login2faRequest));
     }
 }

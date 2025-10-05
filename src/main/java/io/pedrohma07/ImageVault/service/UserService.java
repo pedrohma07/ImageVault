@@ -24,6 +24,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+    private final EncryptionService encryptionService;
 
     public ResponseUserDTO createUser(CreateUserDTO createUserDTO) {
         userRepository.findByEmail(createUserDTO.email()).ifPresent(user -> {
@@ -67,5 +68,15 @@ public class UserService {
             throw new ResourceNotFoundException("Usuário não encontrado com o ID: " + id);
         }
         userRepository.deleteById(uuid);
+    }
+
+    public void enableTwoFactorAuth(String userEmail, String secret) {
+        User user = userRepository.findByEmail(userEmail).orElseThrow(
+                () -> new ResourceNotFoundException("Usuário não encontrado com o e-mail: " + userEmail)
+        );
+
+        user.setTwoFASecret(encryptionService.encrypt(secret));
+        user.set2FAEnabled(true);
+        userRepository.save(user);
     }
 }

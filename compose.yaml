@@ -3,6 +3,11 @@ version: '3.8'
 services:
   postgres:
     image: 'postgres:latest'
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U myuser -d imagevault" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     environment:
       - 'POSTGRES_DB=imagevault'
       - 'POSTGRES_PASSWORD=secret'
@@ -24,6 +29,17 @@ services:
     command: server /data --console-address ":9001"
     volumes:
       - minio-data:/data
+
+  api:
+    build: .
+    container_name: imagevault_api
+    env_file:
+      - .env
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
 
 volumes:
   postgres-data:

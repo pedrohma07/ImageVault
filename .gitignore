@@ -6,6 +6,7 @@ target/
 
 ## application.yaml files
 **/application.yaml
+.env
 
 ### STS ###
 .apt_generated

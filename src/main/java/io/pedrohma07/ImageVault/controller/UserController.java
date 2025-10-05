@@ -27,19 +27,6 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     private final UserService userService;
 
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Registra um novo usuário", description = "Cria uma nova conta de usuário no sistema.") // 2. Descreve o endpoint
-    @SecurityRequirements(value = {})
-    @ApiResponses(value = { // 3. Documenta as possíveis respostas
-            @ApiResponse(responseCode = "201", description = "Usuário registrado com sucesso."),
-            @ApiResponse(responseCode = "400", description = "Dados de entrada inválidos (ex: e-mail ou senha fora do padrão)."),
-            @ApiResponse(responseCode = "409", description = "E-mail já cadastrado no sistema.") // 'Conflict' é o status para email já existente
-    })
-    public ResponseUserDTO createUser(@Valid @RequestBody CreateUserDTO createUserDTO) {
-        return userService.createUser(createUserDTO);
-    }
-
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Lista todos os usuários", description = "Retorna uma lista de todos os usuários registrados no sistema.")
