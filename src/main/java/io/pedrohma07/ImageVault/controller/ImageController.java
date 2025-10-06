@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +24,7 @@ import java.net.URI;
 import java.security.Principal;
 import java.util.UUID;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/images")
 @RequiredArgsConstructor
@@ -39,6 +41,7 @@ public class ImageController {
             @RequestParam("file") MultipartFile file,
             Principal principal // injeta o usuário
     ) {
+        log.info("Started uploadImage action");
         return imageService.uploadImage(file, principal.getName());
     }
 
@@ -49,11 +52,10 @@ public class ImageController {
             @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "limit", defaultValue = "10") int limit,
             Principal principal
-
     ) {
+        log.info("Started listUserImages action");
         Pageable pageable = PageRequest.of(page - 1, limit);
         Page<ImageMetadataDTO> images = imageService.listUserImages(principal.getName(), pageable);
-
         return new PaginatedResponse<>(
                 images.getContent(),
                 page,
@@ -67,6 +69,7 @@ public class ImageController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Obtém os metadados de uma imagem específica do usuário autenticado")
     public ImageMetadataDTO getMetadataById(@PathVariable UUID id, Principal principal) {
+        log.info("Started getMetadataById action");
         return imageService.findMetadataById(id, principal.getName());
     }
 
@@ -78,6 +81,7 @@ public class ImageController {
             @Valid @RequestBody UpdateImageMetadataDTO updateDTO,
             Principal principal
     ) {
+        log.info("Started updateImageMetadata action");
         return imageService.updateImageMetadata(id, principal.getName(), updateDTO);
     }
 
@@ -85,14 +89,15 @@ public class ImageController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Deleta uma imagem do usuário autenticado")
     public void deleteImage(@PathVariable UUID id, Principal principal) {
+        log.info("Started deleteImage action");
         imageService.deleteImage(id, principal.getName());
     }
 
     @GetMapping("/view/{id}")
     @Operation(summary = "Obtém uma URL temporária e redireciona para a visualização da imagem")
     public ResponseEntity<Void> viewImage(@PathVariable UUID id, Principal principal) {
+        log.info("Started viewImage action");
         String imageUrl = imageService.getImageViewUrl(id, principal.getName(), false);
-
         return ResponseEntity
                 .status(HttpStatus.FOUND)
                 .location(URI.create(imageUrl))
@@ -102,6 +107,7 @@ public class ImageController {
     @GetMapping("/view/{id}/thumbnail")
     @Operation(summary = "Redireciona para a URL de visualização do thumbnail da imagem")
     public ResponseEntity<Void> viewImageThumbnail(@PathVariable UUID id, Principal principal) {
+        log.info("Started viewImageThumbnail action");
         String imageUrl = imageService.getImageViewUrl(id, principal.getName(), true);
         return ResponseEntity.status(HttpStatus.FOUND).location(URI.create(imageUrl)).build();
     }

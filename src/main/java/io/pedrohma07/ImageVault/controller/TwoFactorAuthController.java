@@ -10,12 +10,14 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/2fa")
 @RequiredArgsConstructor
@@ -31,16 +33,13 @@ public class TwoFactorAuthController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Inicia a configuração do 2FA para o usuário autenticado")
     public TwoFactorSetupDTO setupTwoFactorAuth(Principal principal) {
-        // 1. Pega o e-mail do usuário autenticado
+        log.info("Started setupTwoFactorAuth action");
         String email = principal.getName();
 
-        // 2. Gera um novo segredo
         GoogleAuthenticatorKey secret = twoFactorAuthService.generateNewSecret();
 
-        // 3. Gera a URL do QR Code
         String qrCodeUrl = twoFactorAuthService.getOtpAuthUrl(APP_NAME, email, secret);
 
-        // 4. Retorna o segredo e a URL para o front-end
         return new TwoFactorSetupDTO(secret.getKey(), qrCodeUrl);
     }
 
@@ -51,6 +50,7 @@ public class TwoFactorAuthController {
             Principal principal,
             @Valid @RequestBody TwoFactorVerificationDTO verificationDTO
     ) {
+        log.info("Started verifyAndEnableTwoFactorAuth action");
         String email = principal.getName();
 
         // 1. Verifica se o código de 6 dígitos é válido para o segredo fornecido

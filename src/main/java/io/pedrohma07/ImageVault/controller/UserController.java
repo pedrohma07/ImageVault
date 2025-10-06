@@ -13,12 +13,14 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/user")
@@ -38,7 +40,7 @@ public class UserController {
     public PaginatedResponse<ResponseUserDTO> listAllUsers(
             @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "limit", defaultValue = "10") int limit) {
-
+        log.info("Started listAllUsers action");
         Pageable pageable = PageRequest.of(page - 1, limit);
         Page<ResponseUserDTO> users = userService.listAllUsers(pageable);
 
@@ -61,6 +63,7 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "Usuário não encontrado." )
     })
     public ResponseUserDTO getUserById(@PathVariable String id) {
+        log.info("Started getUserById action");
         return userService.getUserById(id);
     }
 
@@ -75,6 +78,7 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "Usuário não encontrado." )
     })
     public void updateUser(@PathVariable String id, @Valid @RequestBody UpdateUserDTO updateUserDTO) {
+        log.info("Started updateUser action");
         userService.updateUser(id, updateUserDTO);
     }
 
@@ -88,6 +92,7 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "Usuário não encontrado." )
     })
     public void deleteUser(@PathVariable String id) {
+        log.info("Started deleteUser action");
         userService.deleteUser(id);
     }
 }
