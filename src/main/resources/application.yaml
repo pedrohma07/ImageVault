@@ -1,0 +1,58 @@
+spring:
+  config:
+    import: optional:file:.env[.properties]
+  application:
+    name: ImageVault
+
+  datasource:
+    url: jdbc:postgresql://postgres:5432/imagevault?sessionTimezone=UTC
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        default_schema: dev
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    schemas: dev
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 11MB
+
+logging:
+  level:
+    root: INFO
+    io.pedrohma07.ImageVault: DEBUG
+
+app:
+  encryption:
+    password: ${ENCRYPTION_PASSWORD}
+    salt: ${ENCRYPTION_SALT}
+
+aws:
+  credentials:
+    access-key: ${MINIO_ACCESS_KEY}
+    secret-key: ${MINIO_SECRET_KEY}
+  s3:
+    endpoint: http://minio:9000
+    bucket-name: imagevault-bucket
+  region: us-east-1
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+jwt:
+  secret-key: ${JWT_SECRET_KEY}
+  expiration: 86400000
+  refresh-token:
+    expiration: 604800000
