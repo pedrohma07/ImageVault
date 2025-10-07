@@ -62,7 +62,7 @@
     MINIO_SECRET_KEY=minioadmin
 
     # JWT (Use uma chave secreta forte gerada em Base64 para produção)
-    JWT_SECRET_KEY=NDYyNTQzMjA0NjY5NzM2OTY5NzM2NTcyNzA3MjY1NzA3Mg==
+    JWT_SECRET_KEY=sua-secret-key
 
     # Chaves para criptografia do segredo 2FA (use valores longos e aleatórios)
     ENCRYPTION_PASSWORD=sua-senha-mestra-super-secreta-para-criptografia
